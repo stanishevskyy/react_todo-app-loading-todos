@@ -11,6 +11,16 @@ export const ErrorMessage: React.FC<Props> = ({
   errorMessageTodo,
   setError,
 }) => {
+  useEffect(() => {
+    if (!errorMessageTodo) {
+      return;
+    }
+
+    setTimeout(() => {
+      setError(ErrorType.ERROR_DEFAULT);
+    }, 3000);
+  }, [errorMessageTodo, setError]);
+
   return (
     <div
       data-cy="ErrorNotification"

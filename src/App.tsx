@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { getTodos, USER_ID } from './api/todos';
 
@@ -15,22 +15,28 @@ import { ErrorType } from './types/ErrorType';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>(todos);
   const [errorMessageTodo, setErrorMessageTodo] = useState<ErrorType>(
     ErrorType.ERROR_DEFAULT,
   );
   const [sortTodoBy, setSortTodoBy] = useState<SortType>(SortType.SORT_ALL);
 
   useEffect(() => {
-    setTimeout(() => {
-      getTodos()
-        .then(data => setTodos(data))
-        .catch(() => setErrorMessageTodo(ErrorType.ERROR_LOADING));
-    }, 200);
+    const asyncFetch = async () => {
+      try {
+        const resultFetch = await getTodos();
+
+        setTodos(resultFetch);
+      } catch (error) {
+        setErrorMessageTodo(ErrorType.ERROR_LOADING);
+        throw error;
+      }
+    };
+
+    asyncFetch();
   }, []);
 
-  useEffect(() => {
-    const newTodo = todos.filter(todo => {
+  const filteredTodos = useMemo(() => {
+    return todos.filter(todo => {
       if (SortType.SORT_ACTIVE === sortTodoBy) {
         return !todo.completed;
       }
@@ -39,10 +45,8 @@ export const App: React.FC = () => {
         return todo.completed;
       }
 
-      return todo;
+      return true;
     });
-
-    setFilteredTodos(newTodo);
   }, [todos, sortTodoBy]);
 
   if (!USER_ID) {
