@@ -5,7 +5,7 @@ import { UserWarning } from './UserWarning';
 import { getTodos, USER_ID } from './api/todos';
 
 import { Todo } from './types/Todo';
-import { SortType } from './types/SortType';
+import { FilterType } from './types/FilterType';
 import { ErrorType } from './types/ErrorType';
 
 import { Header } from './components/Header';
@@ -18,7 +18,7 @@ export const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<ErrorType>(
     ErrorType.ERROR_DEFAULT,
   );
-  const [filterTodoBy, setFilterTodoBy] = useState<SortType>(SortType.SORT_ALL);
+  const [filterTodoBy, setFilterTodoBy] = useState<FilterType>(FilterType.ALL);
 
   useEffect(() => {
     const asyncFetch = async () => {
@@ -37,11 +37,11 @@ export const App: React.FC = () => {
 
   const filteredTodos = useMemo(() => {
     return todos.filter(todo => {
-      if (SortType.SORT_ACTIVE === filterTodoBy) {
+      if (FilterType.ACTIVE === filterTodoBy) {
         return !todo.completed;
       }
 
-      if (SortType.SORT_COMPLETED === filterTodoBy) {
+      if (FilterType.COMPLETED === filterTodoBy) {
         return todo.completed;
       }
 

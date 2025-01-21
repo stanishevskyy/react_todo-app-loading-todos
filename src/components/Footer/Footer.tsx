@@ -1,12 +1,12 @@
 import React from 'react';
-import { SortType } from '../../types/SortType';
+import { FilterType } from '../../types/FilterType';
 import classNames from 'classnames';
 import { Todo } from '../../types/Todo';
 
 type Props = {
   todos: Todo[];
-  sortTodoBy: SortType;
-  onClick: (value: SortType) => void;
+  sortTodoBy: FilterType;
+  onClick: (value: FilterType) => void;
 };
 
 export const Footer: React.FC<Props> = ({ todos, sortTodoBy, onClick }) => {
@@ -21,38 +21,19 @@ export const Footer: React.FC<Props> = ({ todos, sortTodoBy, onClick }) => {
 
       {/* Active link should have the 'selected' class */}
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={classNames('filter__link', {
-            selected: sortTodoBy === SortType.SORT_ALL,
-          })}
-          data-cy="FilterLinkAll"
-          onClick={() => onClick(SortType.SORT_ALL)}
-        >
-          All
-        </a>
-
-        <a
-          href="#/active"
-          className={classNames('filter__link', {
-            selected: sortTodoBy === SortType.SORT_ACTIVE,
-          })}
-          data-cy="FilterLinkActive"
-          onClick={() => onClick(SortType.SORT_ACTIVE)}
-        >
-          Active
-        </a>
-
-        <a
-          href="#/completed"
-          className={classNames('filter__link', {
-            selected: sortTodoBy === SortType.SORT_COMPLETED,
-          })}
-          data-cy="FilterLinkCompleted"
-          onClick={() => onClick(SortType.SORT_COMPLETED)}
-        >
-          Completed
-        </a>
+        {Object.values(FilterType).map(typeItem => (
+          <a
+            href={`#/${typeItem}`}
+            key={typeItem}
+            className={classNames('filter__link', {
+              selected: sortTodoBy === typeItem,
+            })}
+            data-cy={`FilterLink${typeItem}`}
+            onClick={() => onClick(typeItem)}
+          >
+            {typeItem}
+          </a>
+        ))}
       </nav>
 
       {/* this button should be disabled if there are no completed todos */}
