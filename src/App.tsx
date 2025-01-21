@@ -6,28 +6,28 @@ import { getTodos, USER_ID } from './api/todos';
 
 import { Todo } from './types/Todo';
 import { SortType } from './types/SortType';
-
-import { Header } from './components/Header/Header';
-import { TodoList } from './components/TodoList/TodoList';
-import { Footer } from './components/Footer/Footer';
-import { ErrorMessage } from './components/ErrorMessage/ErrorMessage';
 import { ErrorType } from './types/ErrorType';
+
+import { Header } from './components/Header';
+import { TodoList } from './components/TodoList';
+import { Footer } from './components/Footer';
+import { ErrorNotification } from './components/ErrorNotification';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [errorMessageTodo, setErrorMessageTodo] = useState<ErrorType>(
+  const [errorMessage, setErrorMessage] = useState<ErrorType>(
     ErrorType.ERROR_DEFAULT,
   );
-  const [sortTodoBy, setSortTodoBy] = useState<SortType>(SortType.SORT_ALL);
+  const [filterTodoBy, setFilterTodoBy] = useState<SortType>(SortType.SORT_ALL);
 
   useEffect(() => {
     const asyncFetch = async () => {
       try {
-        const resultFetch = await getTodos();
+        const loadTodos = await getTodos();
 
-        setTodos(resultFetch);
+        setTodos(loadTodos);
       } catch (error) {
-        setErrorMessageTodo(ErrorType.ERROR_LOADING);
+        setErrorMessage(ErrorType.ERROR_LOADING);
         throw error;
       }
     };
@@ -37,17 +37,17 @@ export const App: React.FC = () => {
 
   const filteredTodos = useMemo(() => {
     return todos.filter(todo => {
-      if (SortType.SORT_ACTIVE === sortTodoBy) {
+      if (SortType.SORT_ACTIVE === filterTodoBy) {
         return !todo.completed;
       }
 
-      if (SortType.SORT_COMPLETED === sortTodoBy) {
+      if (SortType.SORT_COMPLETED === filterTodoBy) {
         return todo.completed;
       }
 
       return true;
     });
-  }, [todos, sortTodoBy]);
+  }, [todos, filterTodoBy]);
 
   if (!USER_ID) {
     return <UserWarning />;
@@ -66,17 +66,17 @@ export const App: React.FC = () => {
         {todos.length > 0 && (
           <Footer
             todos={todos}
-            sortTodoBy={sortTodoBy}
-            onClick={setSortTodoBy}
+            sortTodoBy={filterTodoBy}
+            onClick={setFilterTodoBy}
           />
         )}
       </div>
 
       {/* DON'T use conditional rendering to hide the notification */}
       {/* Add the 'hidden' class to hide the message smoothly */}
-      <ErrorMessage
-        errorMessageTodo={errorMessageTodo}
-        setError={setErrorMessageTodo}
+      <ErrorNotification
+        errorMessageTodo={errorMessage}
+        setError={setErrorMessage}
       />
     </div>
   );

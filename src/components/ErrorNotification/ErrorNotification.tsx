@@ -7,7 +7,7 @@ type Props = {
   setError: (value: ErrorType) => void;
 };
 
-export const ErrorMessage: React.FC<Props> = ({
+export const ErrorNotification: React.FC<Props> = ({
   errorMessageTodo,
   setError,
 }) => {
