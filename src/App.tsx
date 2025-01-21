@@ -22,11 +22,13 @@ export const App: React.FC = () => {
   const [sortTodoBy, setSortTodoBy] = useState<SortType>(SortType.SORT_ALL);
 
   useEffect(() => {
-    getTodos()
-      .then(data => setTodos(data))
-      .catch(() => setErrorMessageTodo(ErrorType.ERROR_LOADING));
+    setTimeout(() => {
+      getTodos()
+        .then(data => setTodos(data))
+        .catch(() => setErrorMessageTodo(ErrorType.ERROR_LOADING));
+    }, 200);
   }, []);
-с
+
   useEffect(() => {
     const newTodo = todos.filter(todo => {
       if (SortType.SORT_ACTIVE === sortTodoBy) {
